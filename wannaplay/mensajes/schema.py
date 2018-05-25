@@ -10,7 +10,7 @@ class MensajeType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    mensajes = graphene.List(LinkType)
+    mensajes = graphene.List(MensajeType)
 
     def resolve_mensajes(self, info, **kwargs):
         return Mensaje.objects.all()

@@ -1,15 +1,15 @@
 import graphene
 
-import users.schema
+import usuarios.schema
 import amigos.schema
 import mensajes.schema
 
 
-class Query(users.schema.Query, amigos.schema.Query, mensajes.schema.Query, graphene.ObjectType):
+class Query(usuarios.schema.Query, amigos.schema.Query, mensajes.schema.Query, graphene.ObjectType):
     pass
 
 
-class Mutation(users.schema.Mutation, amigos.schema.Mutation, mensajes.schema.Mutation, graphene.ObjectType):
+class Mutation(usuarios.schema.Mutation, amigos.schema.Mutation, mensajes.schema.Mutation, graphene.ObjectType):
     pass
 
 
