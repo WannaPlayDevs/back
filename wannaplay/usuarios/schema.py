@@ -1,6 +1,8 @@
 import graphene
 from graphene_django import DjangoObjectType
 
+from django.db.models import Max
+
 from .models import User
 
 
@@ -55,15 +57,15 @@ class CreateUser(graphene.Mutation):
         playPubg = graphene.Boolean()
         playFortnite = graphene.Boolean()
 
-    def mutate(self, info, username, userpass, alias, karma, steamName, bnetName, horarioManana, horarioTarde, horarioNoche, horarioMadrugada,
-               playOverwatch, playWow, playRust, playArk, playGta, playPubg, playFortnite):
+    def mutate(self, info, username, userpass, alias, karma=0, steamName=None, bnetName=None, horarioManana=False, horarioTarde=False, horarioNoche=False, horarioMadrugada=False,
+               playOverwatch=False, playWow=False, playRust=False, playArk=False, playGta=False, playPubg=False, playFortnite=False):
         user = User(username=username, userpass=userpass, alias=alias, karma=karma, steamName=steamName, bnetName=bnetName,
                     horarioManana=horarioManana, horarioTarde=horarioTarde, horarioNoche=horarioNoche, horarioMadrugada=horarioMadrugada,
                     playOverwatch=playOverwatch, playWow=playWow, playRust=playRust, playArk=playArk, playGta=playGta, playPubg=playPubg, playFortnite=playFortnite)
         user.save()
 
         return CreateUser(
-            pkUser=pkUser,
+            pkUser=user.pkUser,
             username=username,
             userpass=userpass,
             alias=alias,
@@ -85,7 +87,7 @@ class CreateUser(graphene.Mutation):
 
 
 class DeleteUser(graphene.ClientIDMutation):
-    permission_classes = (SomePermissionClass,)
+    # permission_classes = (SomePermissionClass,)
 
     class Input:
         id = graphene.String()

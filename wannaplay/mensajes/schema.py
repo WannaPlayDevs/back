@@ -1,8 +1,11 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from .models import Mensaje
+import datetime
 
+from .models import Mensaje
+from usuarios.schema import UserType
+from usuarios.models import User
 
 class MensajeType(DjangoObjectType):
     class Meta:
@@ -18,21 +21,30 @@ class Query(graphene.ObjectType):
 
 class CreateMensaje(graphene.Mutation):
     pkMensaje = graphene.Int()
-    fkRemitente = graphene.Int()
-    fkDestinatario = graphene.Int()
+    fkRemitente = graphene.Field(UserType)
+    fkDestinatario = graphene.Field(UserType)
     asunto = graphene.String()
     cuerpo = graphene.String()
-    fecha = graphene.String()
+    fecha = graphene.types.datetime.Date()
 
     class Arguments:
         fkRemitente = graphene.Int()
         fkDestinatario = graphene.Int()
         asunto = graphene.String()
         cuerpo = graphene.String()
-        fecha = graphene.String()
 
-    def mutate(self, info, fkRemitente, fkDestinatario, asunto, cuerpo, fecha):
-        mensaje = Mensaje(fkRemitente=fkRemitente, fkDestinatario=fkDestinatario, asunto=asunto, cuerpo=cuerpo, fecha=fecha)
+    def mutate(self, info, fkRemitente, fkDestinatario, asunto, cuerpo):
+        remitente = User.objects.filter(pkUser=fkRemitente).first()
+        destinatario = User.objects.filter(pkUser=fkDestinatario).first()
+        fecha = datetime.date.today()
+
+        mensaje = Mensaje(
+            fkRemitente=remitente, 
+            fkDestinatario=destinatario, 
+            asunto=asunto, 
+            cuerpo=cuerpo, 
+            fecha=fecha
+        )
         mensaje.save()
 
         return CreateMensaje(
@@ -46,14 +58,15 @@ class CreateMensaje(graphene.Mutation):
 
 
 class DeleteMensaje(graphene.ClientIDMutation):
-    permission_classes = (SomePermissionClass,)
-
+    # permission_classes = (SomePermissionClass,)
+    id = graphene.String()
+    
     class Input:
         id = graphene.String()
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
-        Mensaje.objects.get(pk=pkMensaje(input.get('id'))[1]).delete()
+        Mensaje.objects.get(pk=pkMensaje(input.get('paco'))[1]).delete()
         return DeleteMensaje()
 
 

@@ -44,7 +44,7 @@ class CreateAmigo(graphene.Mutation):
 
 #revisar, el permissions es para seguridad, se puede hacer de mas formas y es opcional (quitar para probar)
 class DeleteAmigo(graphene.ClientIDMutation):
-    permission_classes = (SomePermissionClass,)
+    # permission_classes = (SomePermissionClass,)
 
     class Input:
         id = graphene.String()
