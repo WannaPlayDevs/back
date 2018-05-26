@@ -42,7 +42,19 @@ class CreateAmigo(graphene.Mutation):
         )
 
 
+#revisar, el permissions es para seguridad, se puede hacer de mas formas y es opcional (quitar para probar)
+class DeleteAmigo(graphene.ClientIDMutation):
+    permission_classes = (SomePermissionClass,)
+
+    class Input:
+        id = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        Amigo.objects.get(pk=pkAmigo(input.get('id'))[1]).delete()
+        return DeleteAmigo()
+
+
 class Mutation(graphene.ObjectType):
     create_amigo = CreateAmigo.Field()
-
-
+    delete_amigo = DeleteAmigo.Field()

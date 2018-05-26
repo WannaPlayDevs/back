@@ -45,6 +45,19 @@ class CreateMensaje(graphene.Mutation):
         )
 
 
+class DeleteMensaje(graphene.ClientIDMutation):
+    permission_classes = (SomePermissionClass,)
+
+    class Input:
+        id = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        Mensaje.objects.get(pk=pkMensaje(input.get('id'))[1]).delete()
+        return DeleteMensaje()
+
+
 class Mutation(graphene.ObjectType):
     create_mensaje = CreateMensaje.Field()
+    delete_mensaje = DeleteMensaje.Field()
 

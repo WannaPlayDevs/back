@@ -84,6 +84,19 @@ class CreateUser(graphene.Mutation):
         )
 
 
+class DeleteUser(graphene.ClientIDMutation):
+    permission_classes = (SomePermissionClass,)
+
+    class Input:
+        id = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        User.objects.get(pk=pkUser(input.get('id'))[1]).delete()
+        return DeleteUser()
+
+
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
+    delete_user = DeleteUser.Field()
 
