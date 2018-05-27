@@ -19,71 +19,19 @@ class Query(graphene.ObjectType):
 
 
 class CreateUser(graphene.Mutation):
-    pkUser = graphene.Int()
-    username = graphene.String()
-    userpass = graphene.String()
-    alias = graphene.String()
-    karma = graphene.Int()
-    steamName = graphene.String()
-    bnetName = graphene.String()
-    horarioManana = graphene.Boolean()
-    horarioTarde = graphene.Boolean()
-    horarioNoche = graphene.Boolean()
-    horarioMadrugada = graphene.Boolean()
-    playOverwatch = graphene.Boolean()
-    playWow = graphene.Boolean()
-    playRust = graphene.Boolean()
-    playArk = graphene.Boolean()
-    playGta = graphene.Boolean()
-    playPubg = graphene.Boolean()
-    playFortnite = graphene.Boolean()
+    user = graphene.Field(UserType)
 
     class Arguments:
         username = graphene.String()
-        userpass = graphene.String()
+        password = graphene.String()
         alias = graphene.String()
-        karma = graphene.Int()
-        steamName = graphene.String()
-        bnetName = graphene.String()
-        horarioManana = graphene.Boolean()
-        horarioTarde = graphene.Boolean()
-        horarioNoche = graphene.Boolean()
-        horarioMadrugada = graphene.Boolean()
-        playOverwatch = graphene.Boolean()
-        playWow = graphene.Boolean()
-        playRust = graphene.Boolean()
-        playArk = graphene.Boolean()
-        playGta = graphene.Boolean()
-        playPubg = graphene.Boolean()
-        playFortnite = graphene.Boolean()
 
-    def mutate(self, info, username, userpass, alias, karma=0, steamName=None, bnetName=None, horarioManana=False, horarioTarde=False, horarioNoche=False, horarioMadrugada=False,
-               playOverwatch=False, playWow=False, playRust=False, playArk=False, playGta=False, playPubg=False, playFortnite=False):
-        user = User(username=username, userpass=userpass, alias=alias, karma=karma, steamName=steamName, bnetName=bnetName,
-                    horarioManana=horarioManana, horarioTarde=horarioTarde, horarioNoche=horarioNoche, horarioMadrugada=horarioMadrugada,
-                    playOverwatch=playOverwatch, playWow=playWow, playRust=playRust, playArk=playArk, playGta=playGta, playPubg=playPubg, playFortnite=playFortnite)
+    def mutate(self, info, username, password, alias):
+        user = User(username=username, alias=alias)
+        user.set_password(password)
         user.save()
 
-        return CreateUser(
-            pkUser=user.pkUser,
-            username=username,
-            userpass=userpass,
-            alias=alias,
-            karma=karma,
-            steamName=steamName,
-            bnetName=bnetName,
-            horarioManana=horarioManana,
-            horarioTarde=horarioTarde,
-            horarioNoche=horarioNoche,
-            horarioMadrugada=horarioMadrugada,
-            playOverwatch=playOverwatch,
-            playWow=playWow,
-            playRust=playRust,
-            playArk=playArk,
-            playGta=playGta,
-            playPubg=playPubg,
-            playFortnite=playFortnite
-        )
+        return CreateUser(user=user)
 
 
 class DeleteUser(graphene.ClientIDMutation):

@@ -1,11 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, UserManager
 
+def myoverridenmeta(name, bases, adict):
+    newClass = type(name, bases, adict)
+    for field in newClass._meta.fields:
+        if field.attname == 'last_login':
+            field.column = 'last_login_date'
+            field.db_column = 'last_login_date'
+    return newClass
 
-class User(models.Model):
+class User(AbstractBaseUser):
 
     pkUser = models.AutoField(primary_key=True)
-    username = models.TextField(null=False, blank=False, max_length=25)
-    userpass = models.TextField(null=False, blank=False, max_length=25)
+    username = models.TextField(null=False, blank=False, max_length=25, unique=True)
+    password = models.TextField(null=False, blank=False, max_length=25)
     alias = models.TextField(null=False, blank=False, max_length=25)
     karma = models.IntegerField(default=0, null=True)
     steamName = models.TextField(null=True)
@@ -22,3 +30,9 @@ class User(models.Model):
     playPubg = models.BooleanField(default=False)
     playFortnite = models.BooleanField(default=False)
 
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['alias']
+    
+    __metaclass__ = myoverridenmeta
