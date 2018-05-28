@@ -56,21 +56,46 @@ class CreateMensaje(graphene.Mutation):
             fecha=mensaje.fecha,
         )
 
+class UpdateMensaje(graphene.Mutation):
+    # import ipdb;ipdb.set_trace()
+    pkMensaje = graphene.Int()
+    asunto = graphene.String()
+    cuerpo = graphene.String()
 
-class DeleteMensaje(graphene.ClientIDMutation):
-    # permission_classes = (SomePermissionClass,)
-    id = graphene.String()
-    
-    class Input:
-        id = graphene.String()
+    class Arguments:
+        pkMensaje = graphene.Int()
+        asunto = graphene.String()
+        cuerpo = graphene.String()
 
-    @classmethod
-    def mutate_and_get_payload(cls, input, context, info):
-        Mensaje.objects.get(pk=pkMensaje(input.get('paco'))[1]).delete()
-        return DeleteMensaje()
+    def mutate(self, info, pkMensaje, asunto=None, cuerpo=None):
+        mensaje = Mensaje.objects.get(pkMensaje=pkMensaje)
+
+        if(asunto is not None):
+            mensaje.asunto = asunto
+            mensaje.save()
+        if(cuerpo is not None):
+            mensaje.cuerpo = cuerpo
+            mensaje.save()
+
+        return mensaje
+
+class DeleteMensaje(graphene.Mutation):
+    pkMensaje = graphene.Int()
+
+    class Arguments:
+        pkMensaje = graphene.Int()
+
+    def mutate(self, info, pkMensaje):
+        mensaje = Mensaje.objects.get(pkMensaje=pkMensaje)
+        mensaje.delete()
+
+        return None
+
 
 
 class Mutation(graphene.ObjectType):
     create_mensaje = CreateMensaje.Field()
+    delete_mensaje = DeleteMensaje.Field()
+    update_mensaje = UpdateMensaje.Field()
     delete_mensaje = DeleteMensaje.Field()
 
