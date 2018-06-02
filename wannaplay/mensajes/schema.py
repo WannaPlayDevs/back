@@ -1,5 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
+from django.db.models import Q
 
 import datetime
 
@@ -14,9 +15,24 @@ class MensajeType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     mensajes = graphene.List(MensajeType)
+    misMensajes = graphene.List(MensajeType, fkDestinatario=graphene.Int())
+    
 
     def resolve_mensajes(self, info, **kwargs):
         return Mensaje.objects.all()
+
+    # def resolve_misMensajes(self, info, **kwargs):
+    #     # import ipdb;ipdb.set_trace()
+    #     fkDestinatario = kwargs.get('fkDestinatario')
+    #     if fkDestinatario is not None:
+    #         return Mensaje.objects.all()
+    #     return None
+
+    def resolve_misMensajes(self, info, fkDestinatario, **kargs):
+        filter = (
+            Q(fkDestinatario_id = fkDestinatario)
+        )
+        return Mensaje.objects.filter(filter)
 
 
 class CreateMensaje(graphene.Mutation):
@@ -97,5 +113,3 @@ class Mutation(graphene.ObjectType):
     create_mensaje = CreateMensaje.Field()
     delete_mensaje = DeleteMensaje.Field()
     update_mensaje = UpdateMensaje.Field()
-    delete_mensaje = DeleteMensaje.Field()
-
