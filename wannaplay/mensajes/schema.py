@@ -15,7 +15,7 @@ class MensajeType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     mensajes = graphene.List(MensajeType)
-    misMensajes = graphene.List(MensajeType, fkDestinatario=graphene.Int())
+    misMensajes = graphene.List(MensajeType, fkDestinatario=graphene.String())
     
 
     def resolve_mensajes(self, info, **kwargs):
@@ -29,8 +29,9 @@ class Query(graphene.ObjectType):
     #     return None
 
     def resolve_misMensajes(self, info, fkDestinatario, **kargs):
+        fkDestinatario = int(fkDestinatario)
         filter = (
-            Q(fkDestinatario_id = fkDestinatario)
+            Q(fkDestinatario = fkDestinatario)
         )
         return Mensaje.objects.filter(filter)
 
