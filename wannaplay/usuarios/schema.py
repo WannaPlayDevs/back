@@ -22,7 +22,10 @@ class Query(graphene.ObjectType):
         playRust = graphene.Boolean(),
         playGta = graphene.Boolean(),
         playPubg = graphene.Boolean(),
-        playFortnite = graphene.Boolean()         
+        playFortnite = graphene.Boolean(),
+        horarioManana=graphene.Boolean(),
+        horarioTarde = graphene.Boolean(),
+        horarioNoche = graphene.Boolean()       
     )
 
     def resolve_users(self, info, **kwargs):
@@ -35,7 +38,8 @@ class Query(graphene.ObjectType):
 
         return user
 
-    def resolve_filterUser(self, info, alias="", playOverwatch=False, playWow=False, playRust=False, playGta=False, playPubg=False, playFortnite=False, **kwargs):
+    def resolve_filterUser(self, info, alias="", playOverwatch=False, playWow=False, playRust=False, playGta=False, playPubg=False, playFortnite=False, horarioManana=False, horarioTarde=False,
+                           horarioNoche=False, **kwargs):
 
         if (alias == "" and (playOverwatch == False and playWow == False and playRust == False and playGta==False and playPubg==False and playFortnite==False)):
             return None
@@ -58,7 +62,13 @@ class Query(graphene.ObjectType):
                 playRust=None
             if(playWow == False):
                 playWow=None
-                
+            if(horarioManana == False):
+                horarioManana = None
+            if(horarioTarde == False):
+                horarioTarde = None
+            if(horarioNoche == False):
+                horarioNoche = None
+
             filter = (
                 Q(playOverwatch__exact = playOverwatch)| 
                 Q(playWow__exact = playWow)| 
@@ -67,6 +77,15 @@ class Query(graphene.ObjectType):
                 Q(playPubg__exact = playPubg)| 
                 Q(playFortnite__exact = playFortnite)
             )
+
+            if (horarioManana == True or horarioTarde == True or horarioNoche == True): 
+
+                filter2 = (
+                    Q(horarioManana__exact=horarioManana) |
+                    Q(horarioTarde__exact=horarioTarde) |
+                    Q(horarioNoche__exact=horarioNoche)
+                )
+                return User.objects.filter(filter).filter(filter2)
             return User.objects.filter(filter)
 
 
