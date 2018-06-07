@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from django.db.models import Max
+from django.db.models import Max, Q
 
 from .models import User
 
@@ -14,6 +14,16 @@ class UserType(DjangoObjectType):
 class Query(graphene.ObjectType):
     users = graphene.List(UserType)
     me = graphene.Field(UserType)
+    filterUser = graphene.List(
+        UserType,
+        alias=graphene.String(),
+        playOverwatch = graphene.Boolean(),
+        playWow = graphene.Boolean(),
+        playRust = graphene.Boolean(),
+        playGta = graphene.Boolean(),
+        playPubg = graphene.Boolean(),
+        playFortnite = graphene.Boolean()         
+    )
 
     def resolve_users(self, info, **kwargs):
         return User.objects.all()
@@ -24,6 +34,40 @@ class Query(graphene.ObjectType):
             raise Exception('Invalid token!')
 
         return user
+
+    def resolve_filterUser(self, info, alias="", playOverwatch=False, playWow=False, playRust=False, playGta=False, playPubg=False, playFortnite=False, **kwargs):
+
+        if (alias == "" and (playOverwatch == False and playWow == False and playRust == False and playGta==False and playPubg==False and playFortnite==False)):
+            return None
+        if (alias != ""):
+            filter = (
+                Q(alias__icontains = alias)
+            )
+            return User.objects.filter(filter)
+        if (alias=="" and (playOverwatch == True or playWow == True or playRust == True or playGta==True or playPubg==True or playFortnite==True)):
+            #import ipdb; ipdb.set_trace()
+            if(playFortnite == False):
+                playFortnite=None
+            if(playGta == False):
+                playGta=None            
+            if(playOverwatch == False):
+                playOverwatch=None
+            if(playPubg == False):
+                playPubg=None
+            if(playRust == False):
+                playRust=None
+            if(playWow == False):
+                playWow=None
+                
+            filter = (
+                Q(playOverwatch__exact = playOverwatch)| 
+                Q(playWow__exact = playWow)| 
+                Q(playRust__exact = playRust)| 
+                Q(playGta__exact = playGta)| 
+                Q(playPubg__exact = playPubg)| 
+                Q(playFortnite__exact = playFortnite)
+            )
+            return User.objects.filter(filter)
 
 
 class CreateUser(graphene.Mutation):
