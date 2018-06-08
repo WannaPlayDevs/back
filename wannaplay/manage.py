@@ -1,9 +1,12 @@
 #!/usr/bin/env python
-import os
 import sys
+import environ
+
+env = environ.Env()
+env.read_env('.env')
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wannaplay.settings")
+    env('DJANGO_SETTINGS_MODULE', default='config.settings.local')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
