@@ -124,6 +124,10 @@ class UpdateUser(graphene.Mutation):
     playGta = graphene.Boolean()
     playPubg = graphene.Boolean()
     playFortnite = graphene.Boolean()
+    language = graphene.String()
+    country = graphene.String()
+    age = graphene.Int()
+    description = graphene.String()
 
     class Arguments:
         pkUser = graphene.Int()
@@ -144,12 +148,17 @@ class UpdateUser(graphene.Mutation):
         playGta = graphene.Boolean()
         playPubg = graphene.Boolean()
         playFortnite = graphene.Boolean()
+        language = graphene.String()
+        country = graphene.String()
+        age = graphene.Int()
+        description = graphene.String()
 
     def mutate(self, info, pkUser, username=None, password=None, alias=None,
                karma=None, steamName=None, bnetName=None, horarioManana=None,
                horarioTarde=None, horarioNoche=None, horarioMadrugada=None,
                playOverwatch=None, playWow=None, playRust=None, playArk=None,
-               playGta=None, playPubg=None, playFortnite=None):
+               playGta=None, playPubg=None, playFortnite=None, language=None,
+               country=None, age=None, description=None):
         user = User.objects.get(pkUser=pkUser)
 
         if (username is not None):
@@ -202,6 +211,18 @@ class UpdateUser(graphene.Mutation):
             user.save()
         if (playFortnite is not None):
             user.playFortnite = playFortnite
+            user.save()
+        if (language is not None):
+            user.language = language
+            user.save()
+        if (country is not None):
+            user.country = country
+            user.save()
+        if (age is not None):
+            user.age = age
+            user.save()
+        if (description is not None):
+            user.description = description
             user.save()
 
         return user

@@ -29,6 +29,10 @@ class User(AbstractBaseUser):
     playGta = models.BooleanField(default=False)
     playPubg = models.BooleanField(default=False)
     playFortnite = models.BooleanField(default=False)
+    language = models.TextField(null=True, max_length=30, blank=False)
+    country = models.TextField(null=True, max_length=30, blank=False)
+    age = models.IntegerField(null=True)
+    description = models.TextField(null=True, max_length=150, blank=False)
 
     objects = UserManager()
 
