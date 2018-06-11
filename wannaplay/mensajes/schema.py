@@ -19,7 +19,7 @@ class Query(graphene.ObjectType):
     
 
     def resolve_mensajes(self, info, **kwargs):
-        return Mensaje.objects.all()
+        return reversed(Mensaje.objects.all())
 
     # def resolve_misMensajes(self, info, **kwargs):
     #     # import ipdb;ipdb.set_trace()
@@ -33,7 +33,7 @@ class Query(graphene.ObjectType):
         filter = (
             Q(fkDestinatario = fkDestinatario)
         )
-        return Mensaje.objects.filter(filter)
+        return reversed(Mensaje.objects.filter(filter))
 
 
 class CreateMensaje(graphene.Mutation):
